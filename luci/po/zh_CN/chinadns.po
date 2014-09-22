@@ -1,0 +1,16 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "ChinaDNS is running"
+msgstr "ChinaDNS 已启动"
+
+msgid "ChinaDNS is not running"
+msgstr "ChinaDNS 未启动"
+
+msgid "Spurious IP"
+msgstr "污染IP"
+
+msgid "China IP"
+msgstr "中国IP"
+
+
