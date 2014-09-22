@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/anyshaw/openwrt-plus-backup/!svn/ver/2/trunk/feeds/luci/applications/luci-dnsfilter/root/etc/uci-defaults
+END
+luci-dnsfilter
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/anyshaw/openwrt-plus-backup/!svn/ver/2/trunk/feeds/luci/applications/luci-dnsfilter/root/etc/uci-defaults/luci-dnsfilter
+END
