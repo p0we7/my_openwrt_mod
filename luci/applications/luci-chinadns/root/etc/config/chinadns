@@ -1,0 +1,8 @@
+
+config chinadns config
+	option enabled '0'
+	option dnsmasq_enabled '1'
+	option address '127.0.0.1'
+	option port '1053'
+	option dns_server '114.114.114.114,8.8.4.4'
+	option iplist_file '/etc/ipset/spurious'

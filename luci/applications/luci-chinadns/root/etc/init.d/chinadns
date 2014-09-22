@@ -1,0 +1,58 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+
+SERVICE_USE_PID=1
+
+APP='chinadns'
+DNSMASQ_CONF='/etc/dnsmasq.conf'
+DNSMASQ_CHINADNS_CONF='/etc/dnsmasq.chinadns.conf'
+
+start() {
+    config_load "$APP"
+    local enabled dnsmasq_enabled address port dns_server iplist_file
+    config_get enabled config enabled
+
+    [ "$enabled" = '1' ] || return 1
+
+    config_get dnsmasq_enabled config dnsmasq_enabled '0'
+    config_get address config address '127.0.0.1'
+    config_get port config port '1053'
+    config_get dns_server config dns_server '114.114.114.114,8.8.4.4'
+    config_get iplist_file config iplist_file '/etc/ipset/spurious'
+    #iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 1053
+    service_start /usr/bin/chinadns \
+    -b $address \
+    -p $port \
+    -s $dns_server \
+    -l $iplist_file
+
+    [ "$dnsmasq_enabled" = '1' ] && dnsmasq_chinadns_start
+    [ "$dnsmasq_enabled" = '0' ] && dnsmasq_chinadns_stop
+}
+}
+
+stop() {
+    #iptables -t nat -D PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 1053
+    service_stop /usr/bin/chinadns
+    dnsmasq_chinadns_stop
+}
+
+dnsmasq_chinadns_start() {
+    [ -f $DNSMASQ_CHINADNS_CONF ] || {
+        [ -z $(cat $DNSMASQ_CONF | grep "^conf-file=$DNSMASQ_CHINADNS_CONF") ] && {
+            echo "conf-file="$DNSMASQ_CHINADNS_CONF >>$DNSMASQ_CONF
+        }
+        echo -e "no-resolv\nserver="$address"#"$port >$DNSMASQ_CHINADNS_CONF
+        /etc/init.d/dnsmasq restart
+    }
+}
+
+dnsmasq_chinadns_stop() {
+    [ -f $DNSMASQ_CHINADNS_CONF ] && {
+        DNSMASQ_CHINADNS_CONF=$(echo $DNSMASQ_CHINADNS_CONF | sed 's/\//\\\//g' )
+        sed -i "/^conf-file=$DNSMASQ_CHINADNS_CONF/d" $DNSMASQ_CONF
+        rm -f $DNSMASQ_CHINADNS_CONF
+        /etc/init.d/dnsmasq restart
+    }
+}
