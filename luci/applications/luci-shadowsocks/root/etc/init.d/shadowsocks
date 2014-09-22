@@ -8,6 +8,7 @@ ss_redir_PID_FILE="/var/run/ss-redir.pid"
 ss_tunnel_PID_FILE="/var/run/ss-tunnel.pid"
 ipset_blacklist="/etc/ipset/blacklist"
 ipset_whitelist="/etc/ipset/whitelist"
+ipset_chinalist="/etc/ipset/chinalist"
 
 start() {
 	# HACK fd
@@ -15,8 +16,8 @@ start() {
 	
 	config_load "shadowsocks"
 	local enabled remote rport lport pass redir_enabled redir_port \
-			whitelist_enabled blacklist_enabled dnsforward_enabled \
-			dnsforward_type
+			whitelist_enabled blacklist_enabled chinaroute_enabled  \
+			dnsforward_type dnsforward_enabled
 	config_get enabled config enabled
 	config_get remote config remote_server
 	config_get rport config remote_port
@@ -27,9 +28,11 @@ start() {
 	config_get redir_port config redir_port
 	config_get whitelist_enabled config whitelist_enabled
 	config_get blacklist_enabled config blacklist_enabled
+	config_get chinaroute_enabled config chinaroute_enabled
 	config_get dnsforward_enabled config dnsforward_enabled
 	config_get dnsforward_type config dnsforward_type
-
+	remoteip="`resolveip -t5 $remote`"
+	
 	[ -z "$remote" ] || [ -z "$rport" ] || [ -z "$lport" ] || [ -z "$pass" ] && {
 		echo "missing parameters. check config"
 		return 1
@@ -37,7 +40,7 @@ start() {
 
 	[ "$enabled" = '1' ] && {
 		service_start /usr/bin/ss-local \
-			-s "$remote" \
+			-s "$remoteip" \
 			-p "$rport" \
 			-l "$lport" \
 			${cipher:+-m $cipher} \
@@ -48,7 +51,7 @@ start() {
 
 	[ "$dnsforward_enabled" = '1' ] && {
 		service_start /usr/bin/ss-tunnel \
-			-s "$remote" \
+			-s "$remoteip" \
 			-p "$rport" \
 			${cipher:+-m $cipher} \
 			-k "$pass" \
@@ -76,15 +79,13 @@ start() {
 
 	[ "$redir_enabled" = '1' ] && {
 		service_start /usr/bin/ss-redir \
-			-s "$remote" \
+			-s "$remoteip" \
 			-p "$rport" \
 			-l "$redir_port" \
 			${cipher:+-m $cipher} \
 			-k "$pass" \
 			-f "$ss_redir_PID_FILE"
 		
-		remoteip="`resolveip -t5 $remote`"
-
 		iptables -t nat -N SHADOWSOCKS
 		iptables -t nat -A SHADOWSOCKS -d 0.0.0.0/8 -j RETURN
 		iptables -t nat -A SHADOWSOCKS -d 10.0.0.0/8 -j RETURN
@@ -108,6 +109,17 @@ start() {
 			iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports $redir_port
 		fi
 		iptables -t nat -I zone_lan_prerouting -j SHADOWSOCKS
+
+		[ "$chinaroute_enabled" = '1' ] && {
+			if [ "$dnsforward_type" = 'ChinaDNS-C' ] && [ ! -f $ipset_chinalist ] ; then
+					ln -s /etc/chinadns_chnroute.txt $ipset_chinalist
+			elif [ ! -f $ipset_chinalist ] ; then
+					echo "Missing 'chinalist' , Please Check $ipset_chinalist." && exit 1
+			fi
+			sed -e "s/^/-A chinalist &/g" -e "1 i\-N chinalist nethash --hashsize 64" $ipset_chinalist | ipset -R -!
+			iptables -t nat -A SHADOWSOCKS -p tcp -m set --match-set chinalist dst -j RETURN
+		}
+
 	}
 }
 
@@ -125,6 +137,7 @@ ss_redir_stop() {
 		iptables -t nat -X SHADOWSOCKS &> /dev/null
 		ipset destroy whitelist &> /dev/null
 		ipset destroy blacklist &> /dev/null
+		ipset destroy chinalist &> /dev/null
 		rm "$ss_redir_PID_FILE"
 	}
 }
