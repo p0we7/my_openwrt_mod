@@ -86,18 +86,18 @@ $(eval $(call application,aria2,LuCI Support for aria2,\
 	+PACKAGE_luci-app-aria2:openssl-util))
 	
 $(eval $(call application,dnsfilter,LuCI Support for dnsfilter,\
-	+PACKAGE_luci-app-dnsfilter:dnsfilter \
+	+PACKAGE_luci-app-dnsfilter:dnsfilter))
 	
 $(eval $(call application,mentohust,LuCI Support for mentohust,\
 	+PACKAGE_luci-app-mentohust:mentohust \
-	+PACKAGE_luci-app-mentohust:libpcap \
+	+PACKAGE_luci-app-mentohust:libpcap))
 	
 $(eval $(call application,webshell,LuCI Support for webshell,\
-	+PACKAGE_luci-app-webshell:webshell \
+	+PACKAGE_luci-app-webshell:webshell))
 
 $(eval $(call application,chinadns,LuCI Support for chinadns,\
 	+PACKAGE_luci-app-chinadns:chinadns \
-	+PACKAGE_luci-app-chinadns:libc \
+	+PACKAGE_luci-app-chinadns:libc))
 
 $(eval $(call application,shadowsocks,LuCI Support for shadowsocks,\
 	+PACKAGE_luci-app-shadowsocks:shadowsocks-libev \
