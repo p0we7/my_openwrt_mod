@@ -1,6 +1,6 @@
 #!/bin/sh 
 
-[ -n "${IPKG_INSTROOT}" ] || {
+[ -n "" ] || {
 	( . /etc/uci-defaults/luci-pptpd ) && rm -f /etc/uci-defaults/luci-pptpd
 	chmod 755 /etc/init.d/pptpd  >/dev/null 2>&1
 	/etc/init.d/pptpd enable  >/dev/null 2>&1	
