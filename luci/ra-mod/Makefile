@@ -100,7 +100,7 @@ $(eval $(call application,chinadns,LuCI Support for chinadns,\
 	+PACKAGE_luci-app-chinadns:libc))
 
 $(eval $(call application,pptpd,LuCI Support for pptpd,\
-        +PACKAGE_luci-app-pptpd:pptpd \
+        +PACKAGE_luci-app-pptpd:pptpd))
 
 $(eval $(call application,shadowsocks,LuCI Support for shadowsocks,\
 	+PACKAGE_luci-app-shadowsocks:shadowsocks-libev \
