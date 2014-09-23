@@ -86,17 +86,28 @@ $(eval $(call application,aria2,LuCI Support for aria2,\
 	+PACKAGE_luci-app-aria2:openssl-util))
 	
 $(eval $(call application,dnsfilter,LuCI Support for dnsfilter,\
-	+PACKAGE_luci-app-dnsfilter:dnsfilter))
+	+PACKAGE_luci-app-dnsfilter:libc \
+	+PACKAGE_luci-app-dnsfilter:bash \
+	+PACKAGE_luci-app-dnsfilter:screen \
+	+PACKAGE_luci-app-dnsfilter:wget))
+
+$(eval $(call application,nwan,nwan configuration module,\
+	+PACKAGE_luci-app-nwan:libc \
+	+PACKAGE_luci-app-nwan:ip \
+	+PACKAGE_luci-app-nwan:kmod-macvlan \
+	+PACKAGE_luci-app-nwan:iptables \
+	+PACKAGE_luci-app-nwan:iptables-mod-conntrack-extra \
+	+PACKAGE_luci-app-nwan:iptables-mod-ipopt))
 	
 $(eval $(call application,mentohust,LuCI Support for mentohust,\
 	+PACKAGE_luci-app-mentohust:mentohust \
 	+PACKAGE_luci-app-mentohust:libpcap))
 	
 $(eval $(call application,webshell,LuCI Support for webshell,\
-	+PACKAGE_luci-app-webshell:webshell))
+	+PACKAGE_luci-app-webshell))
 
 $(eval $(call application,chinadns,LuCI Support for chinadns,\
-	+PACKAGE_luci-app-chinadns:chinadns \
+	+PACKAGE_luci-app-chinadns:ChinaDNS-C \
 	+PACKAGE_luci-app-chinadns:libc))
 
 $(eval $(call application,pptpd,LuCI Support for pptpd,\
