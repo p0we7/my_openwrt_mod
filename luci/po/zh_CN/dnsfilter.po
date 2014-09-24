@@ -59,7 +59,7 @@ msgid "Logs"
 msgstr "程序日志"
 
 msgid "dnsfilter"
-msgstr "dnsfilter"
+msgstr "Dnsfilter"
 
 msgid "Enabled AdBlock Ruls Subscribe"
 msgstr "启用订阅AdBlock规则"

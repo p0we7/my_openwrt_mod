@@ -68,3 +68,10 @@ msgstr "VPN 服务器: 基本设置"
 msgid "VPN Server: Users Manager"
 msgstr "VPN 服务器: 用户管理"
 
+msgid "Online Users"
+msgstr "在线用户"
+
+msgid "VPN Server: Online Users"
+msgstr "VPN 服务器: 在线用户"
+
+

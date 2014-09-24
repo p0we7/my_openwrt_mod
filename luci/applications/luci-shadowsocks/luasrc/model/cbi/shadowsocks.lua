@@ -121,6 +121,41 @@ function whitelist.write(self, section, value)
 	end
 end
 
+chinaroute_enable = redir:option(Flag, "chinaroute_enabled", translate("ChinaRoute Mode"), translate("Chinese ip goes via original line, while foreign ip goes via Transparent Proxy"))
+chinaroute_enable.default = false
+
+update_chnroute_file = redir:option(Button, "_button", " ", "/etc/ipset/chinalist")
+update_chnroute_file.inputtitle = translate("Update")
+update_chnroute_file.inputstyle = "apply"
+function update_chnroute_file.write(self, section, value)
+		update_chnroute_file.inputtitle = translate("Updating...")
+		luci.sys.exec("/etc/init.d/shadowsocks start update_chnroute_file")
+		update_chnroute_file.inputtitle = translate("Update")
+end
+
+chinaroute = redir:option(TextValue, "chinaroute", " ", "")
+chinaroute.template = "cbi/tvalue"
+chinaroute.size = 30
+chinaroute.rows = 10
+chinaroute.wrap = "off"
+chinaroute:depends("chinaroute_enabled", 1)
+
+
+function chinaroute.cfgvalue(self, section)
+	return fs.readfile("/etc/ipset/chinalist") or ""
+end
+function chinaroute.write(self, section, value)
+	if value then
+		value = value:gsub("\r\n?", "\n")
+		fs.writefile("/tmp/chinaroute", value)
+		fs.mkdirr("/etc/ipset")
+		if (fs.access("/etc/ipset/chinalist") ~= true or luci.sys.call("cmp -s /tmp/chinalist /etc/ipset/chinalist") == 1) then
+			fs.writefile("/etc/ipset/chinalist", value)
+		end
+		fs.remove("/tmp/chinalist")
+	end
+end
+
 return m
 
 

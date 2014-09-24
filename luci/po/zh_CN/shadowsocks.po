@@ -4,6 +4,12 @@ msgstr "Content-Type: text/plain; charset=UTF-8\n"
 msgid "Bypass IP Whitelist"
 msgstr "IP白名单"
 
+msgid "ChinaRoute Mode"
+msgstr "中国路由模式"
+
+msgid "Chinese ip goes via original line, while foreign ip goes via Transparent Proxy"
+msgstr "外国IP全部自动代理，中国IP走默认线路"
+
 msgid "Bypass Lan IP"
 msgstr "忽略内网IP列表"
 
@@ -38,13 +44,13 @@ msgid "Transparent Proxy Local Port"
 msgstr "透明代理本地端口"
 
 msgid "shadowsocks"
-msgstr "shadowsocks"
+msgstr "Shadowsocks"
 
 msgid "shadowsocks is not running"
-msgstr "shadowsocks 未运行"
+msgstr "Shadowsocks 未运行"
 
 msgid "shadowsocks is running"
-msgstr "shadowsocks 运行中"
+msgstr "Shadowsocks 运行中"
 
 msgid "DNS Forward"
 msgstr "DNS 转发"

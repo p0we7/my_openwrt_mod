@@ -10,6 +10,11 @@ ipset_blacklist="/etc/ipset/blacklist"
 ipset_whitelist="/etc/ipset/whitelist"
 ipset_chinalist="/etc/ipset/chinalist"
 
+update_chnroute_file() {
+        [ ! -f $ipset_chinalist ] && ln -s ../chinadns_chnroute.txt $ipset_chinalist ;
+            curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -   F\| '{     printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > $ipset_chinalist
+            }
+
 start() {
 	# HACK fd
 	ulimit -n 4096
@@ -64,9 +69,10 @@ start() {
 		uci set dhcp.@dnsmasq[-1].noresolv=1
 
 		if [ "$dnsforward_type" = 'ChinaDNS-C' ];then
+			[ ! -f $ipset_chinalist ] && ln -s ../chinadns_chnroute.txt $ipset_chinalist ;
 			service_start /usr/bin/chinadns \
 				-l /etc/chinadns_iplist.txt \
-				-c /etc/chinadns_chnroute.txt \
+				-c $ipset_chinalist \
 				-p 1053 \
 				-s 114.114.114.114,127.0.0.1:5353 &	
 			uci add_list dhcp.@dnsmasq[-1].server=127.0.0.1#1053
@@ -105,8 +111,8 @@ start() {
 		if [ "$whitelist_enabled" = '1' ];then
 			sed -e "s/^/-A whitelist &/g" -e "1 i\-N whitelist nethash --hashsize 4096" $ipset_whitelist | ipset -R -!
 			iptables -t nat -A SHADOWSOCKS -p tcp -m set ! --match-set whitelist dst -j REDIRECT --to-ports $redir_port
-		else
-			iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports $redir_port
+	#	else
+	#		iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports $redir_port
 		fi
 		iptables -t nat -I zone_lan_prerouting -j SHADOWSOCKS
 
@@ -119,7 +125,7 @@ start() {
 			sed -e "s/^/-A chinalist &/g" -e "1 i\-N chinalist nethash --hashsize 64" $ipset_chinalist | ipset -R -!
 			iptables -t nat -A SHADOWSOCKS -p tcp -m set --match-set chinalist dst -j RETURN
 		}
-
+	iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports $redir_port
 	}
 }
 
