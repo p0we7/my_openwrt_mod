@@ -11,11 +11,13 @@ ipset_whitelist="/etc/ipset/whitelist"
 ipset_chinalist="/etc/ipset/chinalist"
 
 update_chnroute_file() {
-        [ ! -f $ipset_chinalist ] && ln -s ../chinadns_chnroute.txt $ipset_chinalist ;
-            curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -   F\| '{     printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > $ipset_chinalist
+	[ ! -f $ipset_chinalist ] && ln -s ../chinadns_chnroute.txt $ipset_chinalist ;
+	curl 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | grep ipv4 | grep CN | awk -F\| '{printf("%s/%d\n", $4, 32-log($5)/log(2))}' > $ipset_chinalist
+	exit 0;
             }
 
 start() {
+	[ "$1" = "update_chnroute_file" ] && update_chnroute_file
 	# HACK fd
 	ulimit -n 4096
 	

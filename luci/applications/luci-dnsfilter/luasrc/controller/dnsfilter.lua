@@ -17,7 +17,7 @@ function index()
 		return
 	end
 
-	local page = entry({"admin", "services", "dnsfilter"}, cbi("dnsfilter"), _("dnsfilter"))
+	local page = entry({"admin", "services", "dnsfilter"}, cbi("dnsfilter"), _("Dnsfilter"))
 	page.i18n = "dnsfilter"
 	page.dependent = true
 	
