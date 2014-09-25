@@ -38,8 +38,9 @@ start() {
 	config_get chinaroute_enabled config chinaroute_enabled
 	config_get dnsforward_enabled config dnsforward_enabled
 	config_get dnsforward_type config dnsforward_type
-	remoteip="`resolveip -t5 $remote`"
-	
+#	remoteip="`resolveip -t5 $remote`"
+	remoteip="`nslookup $remote 114.114.115.115 | awk 'END{print $3}'`"
+
 	[ -z "$remote" ] || [ -z "$rport" ] || [ -z "$lport" ] || [ -z "$pass" ] && {
 		echo "missing parameters. check config"
 		return 1
